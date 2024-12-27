@@ -17,6 +17,18 @@ mutex mtx;	//creat a mutex object to lock the critical section
 
 int main()
 {
+		//Commonly used functions in C++:
+	/*
+	cout, cin, endl, cerr (print error info)
+	string: size(), length(), find(), empty(), replace(), c_str()
+	cmath: sqrt(), pow(), sin(), cos(), tan()
+	algorithm: sort(begin, end), reverse(), find(), count(), for_each(), transform()
+	vector: push_back(), pop_back(), size(), empty(), clear(), erase(), insert(), resize()
+	chrono (time and date): sleep_for(), duration, time_point
+	thread: thread, async, launch, future, mutex, lock_guard, unique_lock, condition_variable
+	memory: delete, new, shared_ptr, unique_ptr, weak_ptr
+	*/
+
 	//unique_ptr:
 
 	//shared_ptr:
