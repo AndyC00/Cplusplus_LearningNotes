@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <memory>
 
 //Concurrency library:
 #include <thread>
@@ -17,25 +18,39 @@ mutex mtx;	//creat a mutex object to lock the critical section
 
 int main()
 {
-		//Commonly used functions in C++:
-	/*
-	cout, cin, endl, cerr (print error info)
-	string: size(), length(), find(), empty(), replace(), c_str()
-	cmath: sqrt(), pow(), sin(), cos(), tan()
-	algorithm: sort(begin, end), reverse(), find(), count(), for_each(), transform()
-	vector: push_back(), pop_back(), size(), empty(), clear(), erase(), insert(), resize()
-	chrono (time and date): sleep_for(), duration, time_point
-	thread: thread, async, launch, future, mutex, lock_guard, unique_lock, condition_variable
-	memory: delete, new, shared_ptr, unique_ptr, weak_ptr
-	*/
+	//Commonly used functions in C++:
+/*
+cout, cin, endl, cerr (print error info)
+string: size(), length(), find(), empty(), replace(), c_str()
+cmath: sqrt(), pow(), sin(), cos(), tan()
+algorithm: sort(begin, end), reverse(), find(), count(), for_each(), transform()
+vector: push_back(), pop_back(), size(), empty(), clear(), erase(), insert(), resize()
+chrono (time and date): sleep_for(), duration, time_point
+thread: thread, async, launch, future, mutex, lock_guard, unique_lock, condition_variable
+memory: delete, new, shared_ptr, unique_ptr, weak_ptr
+*/
 
-	//unique_ptr:
-
-	//shared_ptr:
 
 	//smart pointers:
+//1. unique_ptr:
+	/* only one unique pointer point to one particular memory area*/
+	auto test = []()
+	{
+		unique_ptr <int> ptr1 = make_unique<int>(10);	//creat a unique pointer
+		std::cout << "The unique pointer is created! Value is " << *ptr1 << endl;
 
-	//weak_ptr:
+		//unable to copy the unique pointer, but can move it
+		std::unique_ptr<int> ptr2 = std::move(ptr1);
+		std::cout << "The unique pointer Has been moved! Value is " << *ptr2 << endl;
+	};
+	test();
+	//when the scope of the unique pointer ends, the memory is automatically released (delete the pointer)
+	//It's deleter can be customized by passing a lambda function to the unique_ptr constructor
+
+//2. shared_ptr:
+
+
+//3. weak_ptr:
 
 	//lambda functions:
 
@@ -45,28 +60,28 @@ int main()
 	//1. Threads:
 	int passingValue = 10;
 	thread threadName(aFunction, passingValue);	//creat a thread
-	cout << "Main thread is running!" << endl;	//the work in main thread
+	std::cout << "Main thread is running!" << endl;	//the work in main thread
 	threadName.join();	//let the main thread wait until the thread is finished
 
 	//2. task-level Concurrency:
 	future<int> result = async(launch::async, compute);	//creat a task
-	cout << "Main thread is running!" << endl;	//the work in main thread
+	std::cout << "Main thread is running!" << endl;	//the work in main thread
 	int value = result.get();	//get the result of the task
-	cout << "The result is: " << value << endl;
+	std::cout << "The result is: " << value << endl;
 
 	//3. synchronization & mutual exclusion (to avoid "race condition" when multiple threads need to access one data at a same time):
 	thread thread1(aFunctionWithMutex);
 	thread thread2(aFunctionWithMutex);	//lock the globalVariableA, ensure that only one thread can access the critical section at a time
 	thread1.join();
 	thread2.join();
-	cout << "The global variable is: " << globalVariableA << endl;
+	std::cout << "The global variable is: " << globalVariableA << endl;
 
 	return 0;
 }
 
 void aFunction(int x)
 {
-	cout << "a function is running! Passed with a value " << x << endl;
+	std::cout << "a function is running! Passed with a value " << x << endl;
 }
 
 int compute()
