@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <memory>
 #include <vector>
+#include <map>
+#include <string>
 
 //Concurrency library:
 #include <thread>
@@ -140,6 +142,60 @@ int main()
 
 
 //4. Vectors (why using one instead of another):
+		//a. vector:
+	// a dynamic array, can be resized, the elements are stored in contiguous memory
+	// when the size of the vector is changed, the memory is reallocated, the old elements are copied to the new memory area
+	// so when insert or delete elements in the vector, the pointer/reference to the elements may be changed. However, the pointer to the vector itself won't be changed
+	vector<int> vec1;
+	vec1.push_back(10);	//add an element to the end of the vector
+	vec1.pop_back();	//remove the last element
+	vec1.size();	//get the size of the vector
+	vec1.empty();	//check if the vector is empty
+	vec1.clear();	//remove all the elements
+	vec1.erase(vec1.begin() + 1);	//remove the element at the position 1
+	vec1.insert(vec1.begin() + 1, 100);	//insert an element at the position 1
+	vec1.resize(10);	//resize the vector to 10 elements
+	vec1.crbegin();	//get the reverse iterator to the beginning of the vector
+	vec1.crend();	//get the reverse iterator to the end of the vector
+	// when to use: when the size of the array is unknown or need to be changed, when the elements need to be added or removed frequently
+		//b. array:
+	// a fixed-size array, the size is determined at compile time, the elements are stored in contiguous memory
+	// when the size of the array is changed, the memory is reallocated, the old elements are copied to the new memory area
+	// so when insert or delete elements in the array, the pointer/reference to the elements may be changed. However, the pointer to the array itself won't be changed
+	// when to use: when the size of the array is known and fixed, when the elements need to be accessed frequently
+		//c. list:
+	// a doubly linked list, the elements are stored in non-contiguous memory
+	// when insert or delete elements in the list, the pointer/reference to the elements won't be changed
+	// so when the size of the list is changed, the memory is not reallocated, the old elements are not copied to the new memory area
+	// when to use: when the elements need to be added or removed frequently, when the elements need to be accessed randomly
+		//e. map (it's like dictionary in other languages):
+	// a key-value pair, the elements are stored in a tree structure
+	// all keys are stored in order, the elements are sorted by the key
+	// all keys are unique, the elements are sorted by the key
+	// when to use: when the elements need to be accessed by key, when the elements need to be sorted by key
+	map<string, string> map1;
+	map1["key1"] = "value1";	//if "key1" doesn't exist, it will be created, and the value is "value1"
+	map1["key2"] = "value2";
+	auto result = map1.insert(make_pair("key3", "value3"));	//insert a key-value pair
+	//the return value of the insert method is a pair, the first element is an iterator to the inserted element, the second element is a bool value to indicate if the insertion is successful:
+	cout << "The value successfully insert? " << result.second << endl;
+	//using iterator to access the elements in the map:
+	for (auto it = map1.begin(); it != map1.end(); ++it) 
+	{
+		std::cout << it->first << ": " << it->second << "\n";
+	}
+	//using buffer to access the elements in the map:
+	cout << "The value of key1 is " << map1["key1"] << endl;
+	//find & delete:
+	auto itFind = map1.find("key1");
+	if (itFind != map1.end())
+	{
+		cout << "found the key1: " << itFind->second << endl;
+		map1.erase(itFind);	//delete the found pair in the map
+	}
+		//f. unordered_map:
+	// a key-value pair, the elements are stored in a hash table
+	// all keys are stored in random order, the elements are not sorted by the key
 
 
 
