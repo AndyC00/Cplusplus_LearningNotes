@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <memory>
+#include <vector>
 
 //Concurrency library:
 #include <thread>
@@ -48,28 +49,55 @@ memory: delete, new, shared_ptr, unique_ptr, weak_ptr
 	//It's deleter can be customized by passing a lambda function to the unique_ptr constructor
 
 //2. shared_ptr:
-
+	//when to use: when a heap-allocated object is shared among multiple objects
+	//shared_ptr keeps a reference count counting how many share_ptr pointing to it, when the reference count is 0, the memory is released
+	shared_ptr<float> ptrPI = make_shared<float>(3.1415926);
+	cout << "Now there are " << ptrPI.use_count() << " share pointers points to this" << endl;	//get the reference count
+	{
+		shared_ptr<float> ptrPI2 = ptrPI;
+		//the share pointer they share the same memory area and same control block:
+		cout << "Now there are " << ptrPI2.use_count() << " share pointers points to this" << endl;	//2
+		cout << "Now there are " << ptrPI.use_count() << " share pointers points to this" << endl;	//2
+	}
+	//when out of the scope, the reference count is 1, ptrPI2 is released
+	cout << "Now there are " << ptrPI.use_count() << " share pointers points to this" << endl;	//1
+	//deleter can be customized
 
 //3. weak_ptr:
+	//use with shared_ptr, it Won't increase the reference count, it doesn't own the object and doesn't have a deleter, only an observer
+	//when to use: to avoid circular reference/ reference cycle (two objects using share_ptr to point to each other, the reference count will never be 0)
+	//weak_ptr doesn't control the lifetime of the object, it only keeps a pointer to the object which is managed by the shared_ptr
+	//it's expired() method can be used to check if the object is still alive. if so, the weak_ptr is expired
+	shared_ptr <int> sp1 = make_shared<int>(1000);
+	weak_ptr<int> wp = sp1;
+	cout << "The weak pointer is expired? " << wp.expired() << endl;	//0
+	//using lock() to get a shared_ptr from a weak_ptr
+	shared_ptr<int> sp2 = wp.lock();
+	cout << "Now there are " << sp1.use_count() << " share pointers points to sp1" << endl;	//2
+	sp1.reset();	//release the object
 
 	//lambda functions:
 
+
+
 	//Vectors (why using one instead of another):
 
-		//Concurrency:
-	//1. Threads:
+
+
+	//Concurrency:
+//1. Threads:
 	int passingValue = 10;
 	thread threadName(aFunction, passingValue);	//creat a thread
 	std::cout << "Main thread is running!" << endl;	//the work in main thread
 	threadName.join();	//let the main thread wait until the thread is finished
 
-	//2. task-level Concurrency:
+//2. task-level Concurrency:
 	future<int> result = async(launch::async, compute);	//creat a task
 	std::cout << "Main thread is running!" << endl;	//the work in main thread
 	int value = result.get();	//get the result of the task
 	std::cout << "The result is: " << value << endl;
 
-	//3. synchronization & mutual exclusion (to avoid "race condition" when multiple threads need to access one data at a same time):
+//3. synchronization & mutual exclusion (to avoid "race condition" when multiple threads need to access one data at a same time):
 	thread thread1(aFunctionWithMutex);
 	thread thread2(aFunctionWithMutex);	//lock the globalVariableA, ensure that only one thread can access the critical section at a time
 	thread1.join();
